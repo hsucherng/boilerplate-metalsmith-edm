@@ -59,7 +59,7 @@ module.exports = {
 
         // At-rule
         "at-rule-no-unknown": [true, {
-            "ignoreAtRules": ["content", "elif", "else", "each", "extend", "for", "function", "if", "include", "mixin"]
+            "ignoreAtRules": ["content", "elif", "else", "each", "extend", "for", "function", "if", "include", "mixin", "at-root"]
         }],
 
         // Comment
