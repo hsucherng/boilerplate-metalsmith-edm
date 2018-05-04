@@ -1,23 +1,21 @@
-/* Initial dependency */
-var argv           = require('./custom-modules/argv.js');
-
-/* Metalsmith START */
-var Metalsmith     = require('metalsmith');
-var express        = require('metalsmith-express');
-var inlineCss      = require('inline-css');
-var multimatch     = require('multimatch');
-var open           = require('open');
-var postcss        = require('metalsmith-with-postcss');
-var postcssScss    = require('postcss-scss');
-var sass           = require('metalsmith-sass');
-var watch          = require('metalsmith-watch');
+/* Modules from npm */
+const Metalsmith     = require('metalsmith');
+const express        = require('metalsmith-express');
+const inlineCss      = require('inline-css');
+const multimatch     = require('multimatch');
+const open           = require('open');
+const postcss        = require('metalsmith-with-postcss');
+const postcssScss    = require('postcss-scss');
+const sass           = require('metalsmith-sass');
+const watch          = require('metalsmith-watch');
 
 /* Custom modules */
-var run            = require('./custom-modules/metalsmith-run.js');
-var virtualFolder  = require('./custom-modules/metalsmith-virtual-folder.js');
+const argv           = require('./custom-modules/argv.js');
+const run            = require('./custom-modules/metalsmith-run.js');
+const virtualFolder  = require('./custom-modules/metalsmith-virtual-folder.js');
 
 /* Configs */
-var configs = {
+const configs = {
         express:     require('./configs/express.js'),
         misc:        require('./configs/misc.js'),
         stylelint:   require('./configs/stylelint.js'),
@@ -55,10 +53,10 @@ Metalsmith(__dirname)
 
     /* CSS Inliner */
     .use(function(files, metalsmith, done) {
-        var targetFiles = multimatch(Object.keys(files), ['**/*.html']);
-        var total = targetFiles.length;
-        var count = 0;
-        var stepFn = function() {
+        const targetFiles = multimatch(Object.keys(files), ['**/*.html']);
+        const total = targetFiles.length;
+        let count = 0;
+        let stepFn = function() {
                 count++;
 
                 if(count >= total) {
@@ -73,14 +71,14 @@ Metalsmith(__dirname)
         }
 
         targetFiles.forEach(function(filepath, index) {
-            var splitFilepath = filepath.split('\\');
-            var folderPath = (splitFilepath.length > 1)
+            const splitFilepath = filepath.split('\\');
+            const folderPath = (splitFilepath.length > 1)
                                 ? splitFilepath.slice(0, splitFilepath.length-1).join('\\')
                                 : '';
-            var file = files[filepath];
-            var fileContents = file.contents.toString();
-            var cssFilename = file.inlineCss;
-            var cssFilepath = (folderPath)
+            const file = files[filepath];
+            const fileContents = file.contents.toString();
+            const cssFilename = file.inlineCss;
+            const cssFilepath = (folderPath)
                                 ? folderPath + '\\' + cssFilename
                                 : cssFilename;
 
@@ -90,7 +88,7 @@ Metalsmith(__dirname)
                 return;
             }
 
-            var cssContents = files[cssFilepath].contents.toString();
+            const cssContents = files[cssFilepath].contents.toString();
 
             inlineCss(fileContents, {
                 extraCss: cssContents,

@@ -2,11 +2,11 @@
  * Commonly used regular expressions.
  */
 
-var captureHtmlTagAttrs = '(?: ((?:(?:\\S| )+?)))?';
+const captureHtmlTagAttrs = '(?: ((?:(?:\\S| )+?)))?';
 
 module.exports = {
     /*
-     * var str = '    <myTag implicit-attr explicit-attr="value">Contents</myTag>';
+     * let str = '    <myTag implicit-attr explicit-attr="value">Contents</myTag>';
      *
      * str.replace(regexpFactory.tag('myTag'), function($0, $1, $2) {
      *     console.log($0); // '<myTag implicit-attr explicit-attr="value">Contents</myTag>'
@@ -19,7 +19,7 @@ module.exports = {
     },
 
     /*
-     * var str = '    <myTag implicit-attr explicit-attr="value">Contents</myTag>';
+     * let str = '    <myTag implicit-attr explicit-attr="value">Contents</myTag>';
      *
      * str.replace(regexpFactory.indentTag('myTag'), function($0, $1, $2, $3) {
      *     console.log($0); // '    <myTag implicit-attr explicit-attr="value">Contents</myTag>'
@@ -34,7 +34,7 @@ module.exports = {
 
 
     /*
-     * var str = '    <myTag implicit-attr explicit-attr="value" />';
+     * let str = '    <myTag implicit-attr explicit-attr="value" />';
      *
      * str.replace(regexpFactory.voidTag('myTag'), function($0, $1) {
      *     console.log($0); // '<myTag implicit-attr explicit-attr="value" />'
@@ -47,7 +47,7 @@ module.exports = {
 
 
     /*
-     * var str = '    <myTag implicit-attr explicit-attr="value" />';
+     * let str = '    <myTag implicit-attr explicit-attr="value" />';
      *
      * str.replace(regexpFactory.indentVoidTag('myTag'), function($0, $1, $2) {
      *     console.log($0); // '    <myTag implicit-attr explicit-attr="value" />'
@@ -60,8 +60,8 @@ module.exports = {
     },
 
     /*
-     * var str = 'disabled class="one two-three  four" id="foobar"';
-     * var strMatches = str.match(regexpFactory.tagAttrs);
+     * let str = 'disabled class="one two-three  four" id="foobar"';
+     * let strMatches = str.match(regexpFactory.tagAttrs);
      *
      * strMatches should be equal to the following:
      *

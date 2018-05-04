@@ -11,13 +11,13 @@
  *
  */
 module.exports = function(key) {
-    for(var i = 0; i < process.argv.length; i++) {
+    for(let i = 0; i < process.argv.length; i++) {
         if(key.substr(0,2) === '--') {
             if(process.argv[i] === key) {
                 return true;
             }
         } else if(process.argv[i].indexOf(key) === 0) {
-            var splitKeyStr = process.argv[i].split('=');
+            const splitKeyStr = process.argv[i].split('=');
 
             if(splitKeyStr.length === 2) {
                 return splitKeyStr[1];
