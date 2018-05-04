@@ -4,5 +4,5 @@ module.exports = {
      * so that when the files are served on localhost, it would end up as
      * `HOST:PORT/VIRTUAL-FOLDER/`
      */
-    virtualFolder: 'edm\\'
+    virtualFolder: 'edm'
 };
