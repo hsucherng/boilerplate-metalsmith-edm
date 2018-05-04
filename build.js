@@ -108,10 +108,17 @@ Metalsmith(__dirname)
     .use(virtualFolder(configs.misc.virtualFolder))
 
     /* Watch and serve */
-    .use(express(configs.express))
     .use(run({
-        unless: '--dist',
-        callback: watch(configs.watch)
+        condition: function(files, metalsmith, done) {
+            return !argv('--dist');
+        },
+        plugin: express(configs.express)
+    }))
+    .use(run({
+        condition: function(files, metalsmith, done) {
+            return !argv('--dist');
+        },
+        plugin: watch(configs.watch)
     }))
 
     /* END! */
