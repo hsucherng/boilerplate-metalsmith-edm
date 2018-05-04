@@ -6,6 +6,7 @@ var Metalsmith     = require('metalsmith');
 var express        = require('metalsmith-express');
 var inlineCss      = require('inline-css');
 var multimatch     = require('multimatch');
+var open           = require('open');
 var postcss        = require('metalsmith-with-postcss');
 var postcssScss    = require('postcss-scss');
 var sass           = require('metalsmith-sass');
@@ -115,6 +116,14 @@ Metalsmith(__dirname)
 
     /* END! */
     .build(function(err, files) {
-        var message = err ? err : 'Build complete!';
-        console.log(message);
+        if(err) {
+            console.error(err);
+            return;
+        }
+
+        console.log('Build complete!');
+
+        if(argv('--open')) {
+            open(`http://${configs.express.host}:${configs.express.port}/${configs.misc.virtualFolder}`);
+        }
     });
