@@ -1,35 +1,60 @@
-# EDM Name
+# EDM-NAME
 
 This project uses [Metalsmith](http://metalsmith.io), and has been setup with the following:
 
 - [Express](https://github.com/chiefy/metalsmith-express) (which also comes with LiveReload)
 - [Inline CSS](https://github.com/borisovg/metalsmith-inline-css)
+- [Nunjucks](https://mozilla.github.io/nunjucks/)
 - [SCSS](http://sass-lang.com/)
 - [Stylelint](https://stylelint.io/)
 
 ## Initial setup
 
-1. Make sure you have [NodeJS](http://nodejs.org) and [Yarn](http://yarnpkg.com/) installed. Currently tested with NodeJS v6.9.3 and Yarn v1.6.0.
+1. Make sure you have [NodeJS](http://nodejs.org) and [Yarn](http://yarnpkg.com/) installed. Currently tested with NodeJS v10.14.0 and Yarn v1.12.3.
 2. Clone this repository onto your machine.
 3. Open up the command-line and `cd` into this repository folder.
 4. Run `yarn`. This should install all the required dependencies.
-5. You are now ready to start building. Run `node build --open`, and the website will be opened in your browser once it is ready.
+5. Run `node setup` to run a basic initial setup.
+6. You are now ready to start building. Run `node build`, then navigate to the full localhost path to view the EDM.
 
-## Configurations
+## Notes
 
-Check the files in the `configs` folder for the configurations that affect the build and its output.
+### YAML
 
-### Virtual Folder
+Each page can have its own unique metadata through the YAML frontmatter. The format is typically as follows:
 
-The build has a "virtual folder" setup by default — basically, the build sends all the output files into the `virtualFolder` path that is set inside `configs/misc.js`. This is to allow for a more organised browser history.
+```
+---
+title: Home
+subtitle: Welcome to Home
+---
 
-So, for example, if you are developing a website called *The Jackson Five's*, you should change the value of the `virtualFolder` from `'edm'` to `'the-jackson-fives'`. After that, your files will be served under `http://localhost:8080/the-jackson-fives/`, and will be distinct in your browser history.
+<p>Put your page contents here.</p>
+```
 
-To disable this, set the `virtualFolder` value to `''`.
+Using the above example, inserting `{{ title }}` into your `.njk` file will then be replaced with `Home`, while inserting `{{ subtitle }}` will be replaced with `Welcome to Home`.
+
+## Additional configurations
+
+Check the files in the `configs` folder for the configurations that affect the build and its output:
+
+- `express.js`: This determines the `host` and `port` to serve your EDM on. By default it is set to `localhost:8080`.
+- `misc.js`: Miscellaneous settings:
+    - `setupComplete`: This boolean is used to determine whether we've run the `setup` command. Once the `setup` command is completed, this property will be updated accordingly.
+    - `virtualFolderName`: This determines the final path that the EDM will be served on. Once the `setup` command is completed, this property will be updated accordingly.
+- `watch.js`: This determines what files are watched, as well as how the files trigger rebuilds of other files whenever they are changed.
+
+## Stylelint
+
+This project has `.stylelintignore` and `.stylelintrc.json` setup for use with [SublimeLinter](https://github.com/SublimeLinter/SublimeLinter) and [SublimeLinter-stylelint](https://github.com/SublimeLinter/SublimeLinter-stylelint). You will need to install both of those using Package Control, as well as globally installing PostCSS and Stylelint using `npm`:
+
+```
+npm install -g postcss stylelint
+```
 
 ## Debugging notes
 
-For certain plugins, we can get the build to log information in the console by setting the `DEBUG` environment variable. Currently, in this build, it seems that `metalsmith-in-place` and `metalsmith-copy` have been setup for this behaviour.
+For certain plugins, we can get the build to log information in the console by setting the `DEBUG` environment variable.
 
 On Windows, use the `set` command to set a value for the `DEBUG` environment variable. Setting it to `*` would turn on debugging for all configured plugins:
 

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>{% if title %}{{ title }} | {% endif %}EDM-NAME</title>
+    </head>
+    <body>
+        <table border="0" cellpadding="0" cellspacing="0" class="wrapper">
+            <tbody>
+                <tr>
+                    <td>
+                        {% block header %}Header here.{% endblock %}
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        {% block contents %}{% endblock %}
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        {% block footer %}Footer here.{% endblock %}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </body>
+</html>

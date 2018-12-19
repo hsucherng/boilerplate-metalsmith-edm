@@ -1,11 +1,11 @@
 /* Modules from npm */
 const Metalsmith     = require('metalsmith');
+const colors         = require('colors/safe');
 const express        = require('metalsmith-express');
 const inlineCss      = require('inline-css');
+const inPlace        = require('metalsmith-in-place');
 const multimatch     = require('multimatch');
-const open           = require('open');
-const postcss        = require('metalsmith-with-postcss');
-const postcssScss    = require('postcss-scss');
+const path           = require('path');
 const sass           = require('metalsmith-sass');
 const watch          = require('metalsmith-watch');
 
@@ -18,13 +18,17 @@ const virtualFolder  = require('./custom-modules/metalsmith-virtual-folder.js');
 const configs = {
         express:     require('./configs/express.js'),
         misc:        require('./configs/misc.js'),
-        stylelint:   require('./configs/stylelint.js'),
         watch:       require('./configs/watch.js')
     };
 
 /* Starting the entire build process */
 
-console.log('Building...');
+if(!configs.misc.setupComplete) {
+    console.log(colors.yellow.bold(`Before building, you must first complete the initial setup. You can do that by running ${ colors.green('node setup') }.`));
+    return;
+}
+
+console.log(`\r\n${ colors.green.bold('Building...') }\r\n`);
 
 /* Starting Metalsmith */
 
@@ -33,22 +37,20 @@ Metalsmith(__dirname)
     .destination('build')
 
     /* CSS */
-    .use(postcss({
-        pattern: ['**/*.scss'],
-        syntax: postcssScss,
-        plugins: {
-            "stylelint": {
-                config: configs.stylelint
-            },
-            "autoprefixer": {},
-            "postcss-reporter": {}
-        }
-    }))
     .use(sass({
         outputStyle: "expanded",
         outputDir: function(originalPath) {
             return originalPath.replace('scss', 'css');
         }
+    }))
+
+    /* HTML */
+    .use(inPlace({
+        pattern: '**/*.njk',
+        engineOptions: {
+            path: __dirname + '/templates'
+        },
+        suppressNoFilesError: true
     }))
 
     /* CSS Inliner */
@@ -77,18 +79,16 @@ Metalsmith(__dirname)
                                 : '';
             const file = files[filepath];
             const fileContents = file.contents.toString();
-            const cssFilename = file.inlineCss;
-            const cssFilepath = (folderPath)
-                                ? folderPath + '\\' + cssFilename
-                                : cssFilename;
+            const cssFilepath = file.inlineCss;
+            const finalCssFilepath = path.join(folderPath, cssFilepath);
 
-            if(!files[cssFilepath]) {
-                console.error(`Unable to find CSS file ${cssFilepath}.`);
+            if(!files[finalCssFilepath]) {
+                console.error(`Unable to find CSS file ${finalCssFilepath}.`);
                 stepFn();
                 return;
             }
 
-            const cssContents = files[cssFilepath].contents.toString();
+            const cssContents = files[finalCssFilepath].contents.toString();
 
             inlineCss(fileContents, {
                 extraCss: cssContents,
@@ -96,10 +96,24 @@ Metalsmith(__dirname)
                 url: ' '
             }).then(function(html) {
                 file.contents = html;
-                delete files[cssFilepath];
                 stepFn();
             });
         });
+    })
+
+    /* Remove all CSS files, as we're not allowed to use them in EDMs */
+    .use(function(files, metalsmith, done) {
+        const targetFiles = multimatch(Object.keys(files), ['**/*.css']);
+
+        if(!targetFiles.length) {
+            done();
+        }
+
+        targetFiles.forEach(function(filepath) {
+            delete files[filepath];
+        });
+
+        done();
     })
 
     /* Virtual folder */
@@ -122,13 +136,13 @@ Metalsmith(__dirname)
     /* END! */
     .build(function(err, files) {
         if(err) {
-            console.error(err);
+            console.error(colors.red(err));
             return;
         }
 
-        console.log('Build complete!');
-
-        if(argv('--open')) {
-            open(`http://${configs.express.host}:${configs.express.port}/${configs.misc.virtualFolder}`);
-        }
+        console.log(`
+${ colors.green.bold('Build complete!') }
+ - Open your browser and navigate to ${ colors.yellow.bold(`http://${configs.express.host}:${configs.express.port}/${configs.misc.virtualFolder}`) } to view the site
+`
+        );
     });
